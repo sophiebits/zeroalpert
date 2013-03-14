@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block pagecontent %}
+
+<h2>{{meal.title}}</h2>
+
+<p>{{meal.dt}}</p>
+
+<ul>
+{% for dish in dishes %}
+    <li>{{dish.title}}</li>
+{% endfor %}
+</ul>
+
+{% if feedback_with_authors %}
+    <h3>Feedback</h3>
+
+    <ul>
+    {% for feedback, author in feedback_with_authors %}
+        <li><p>{{author.full_name}} gave the Whole Meal {{feedback.stars}} stars</p>
+        <p><em>{{feedback.text}}</em></p></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+<h3>Rate this meal</h3>
+
+<form id="give-feedback" action="/meals/{{meal.key.id()}}/feedback" method="POST">
+<p>{{user_data.full_name}} gave the Whole Meal
+<select name="stars">
+<option value=""></option>
+<option value="5">5 - Delicious!!!</option>
+<option value="4">4 - Yum!</option>
+<option value="3">3 - Not bad</option>
+<option value="2">2 - Meh.</option>
+<option value="1">1 - Yuck!</option>
+</select>
+stars</p>
+<p><textarea name="text" cols="40" rows="6"></textarea></p>
+<p><input type="submit" value="Submit"></p>
+</form>
+
+{% endblock pagecontent %}
+
+{% block pagescript %}
+<script>
+(function() {
+    var $giveFeedback = $("#give-feedback");
+    var $submit = $giveFeedback.find("input:submit").prop("disabled", true);
+    $giveFeedback.find("select[name=stars]").on("change", function() {
+        $submit.prop("disabled", !$(this).val().length);
+    });
+})();
+</script>
+{% endblock pagescript %}
